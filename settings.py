@@ -1,3 +1,2 @@
-
-valid_email = "vasya@mail.com"
-valid_password = "12345"
+valid_email = "ann@spbivc.ru"
+valid_password = "tLRysrVq5REhdFx"

@@ -1,15 +1,14 @@
-"""Модуль 19"""
 import json
 
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 
-class PetFriends:
+class PetFriendsTest:
     """апи библиотека к веб приложению Pet Friends"""
 
     def __init__(self):
-        self.base_url = "https://petfriends1.herokuapp.com/"
+        self.base_url = "https://petfriends.skillfactory.ru/"
 
     def get_api_key(self, email: str, passwd: str) -> json:
         """Метод делает запрос к API сервера и возвращает статус запроса и результат в формате
@@ -106,3 +105,42 @@ class PetFriends:
         except json.decoder.JSONDecodeError:
             result = res.text
         return status, result
+
+    def add_photo_to_pet(self, auth_key: json, pet_id: str, pet_photo: str) -> (int, json):
+        """Метод отправляет на сервер фото к добавленному ранее ранее питомцу. Возвращает статус
+        запроса  и данные питомца в JSON"""
+        data = MultipartEncoder(
+            fields={
+                'pet_photo': (pet_photo, open(pet_photo, 'rb'), 'image/jpg')
+            })
+        headers = {'auth_key': auth_key['key'], 'Content-Type': data.content_type}
+
+        res = requests.post(self.base_url + '/api/pets/set_photo/' + pet_id, headers=headers, data=data)
+        status = res.status_code
+
+        try:
+            result = res.json()
+        except json.decoder.JSONDecodeError:
+            result = res.text
+        return status, result
+
+    def create_pet_simple(self, auth_key: json, name: str, animal_type: str, age: int) -> (int, json):
+        data = MultipartEncoder(
+            fields={
+                'name': name,
+                'animal_type': animal_type,
+                'age': str(age),
+            })
+        headers = {'auth_key': auth_key['key'], 'Content-Type': data.content_type}
+
+        res = requests.post(self.base_url + 'api/create_pet_simple', headers=headers, data=data)
+        status = res.status_code
+        try:
+            result = res.json()
+        except json.decoder.JSONDecodeError:
+            result = res.text
+        return status, result
+
+
+
+
